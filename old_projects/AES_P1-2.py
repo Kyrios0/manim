@@ -6,29 +6,10 @@ Part2: Shift_row
 author: Kyr1os, Whatever
 v1.0 has finished @ 18.04.16
 """
-from big_ol_pile_of_manim_imports import *
-from old_projects.crypto import sha256_tex_mob, bit_string_to_mobject
-import sys
-import argparse
-import imp
-import inspect
-import itertools as it
-import os
-import subprocess as sp
-import traceback
-import copy
-from constants import *
 
-from scene.scene import Scene
-from utils.sounds import play_error_sound
-from utils.sounds import play_finish_sound
+from AES_lib import *
 
-class Text_square(VGroup):
-    def __init__(self, text = '', side_length = 1):
-        VGroup.__init__(self)
-        self.add(Square(side_length=side_length))
-        self.add(TextMobject(text).scale(1.2 * side_length))
-        self.arrange_submobjects(OUT)
+init_cipher = [["%02x" % ((ord(urandom(1)))) for row in range(4)] for column in range(4)]
 
 class Sub_bytes(Scene):
     def construct(self):
@@ -37,16 +18,16 @@ class Sub_bytes(Scene):
 
     def init_plain(self):
         cipher_box = VGroup()
-        for i in range(4):
+        for row in range(4):
             row_box = VGroup()
-            for j in range(4):
-                one = Square(side_length = 1.2)
-                row_box.add(one)
+            for column in range(4):
+                row_box.add(Text_square(text = init_cipher[row][column], side_length = 1.2))
             row_box.arrange_submobjects(RIGHT, buff = 0)
             cipher_box.add(row_box)
         cipher_box.arrange_submobjects(DOWN, buff = 0)
         cipher_box.shift(3 * LEFT)
-		self.cipher_box = cipher_box
+    	self.cipher_box = cipher_box
+
         self.play(ShowCreation(self.cipher_box), time = 3)
         self.wait(2)
 
@@ -68,16 +49,17 @@ class Shift_row(Scene):
         self.shift_box()
 
     def init_cipher_box(self):
-        self.cipher_box = VGroup()
-        for i in range(4):
-            row_box = VGroup()
-            for j in range(4):
-                one = Text_square(text = str(i)+str(j), side_length = 1.5)
-                row_box.add(one)
-            row_box.arrange_submobjects(RIGHT, buff = 0)
-            self.cipher_box.add(row_box)
-        self.cipher_box.arrange_submobjects(DOWN, buff = 0)
-        self.cipher_box.shift(3 * LEFT)
+        cipher_box = VGroup()
+        for row in range(4):
+            cipher_row_box = VGroup()
+            for column in range(4):
+                cipher_row_box.add(Text_square(text = init_cipher[row][column], side_length = 1.5))
+            cipher_row_box.arrange_submobjects(RIGHT, buff = 0)
+            cipher_box.add(cipher_row_box)
+        cipher_box.arrange_submobjects(DOWN, buff = 0)
+        cipher_box.shift(3 * LEFT)
+        self.cipher_box = cipher_box
+
         self.play(ShowCreation(self.cipher_box), time = 3)
         self.wait(1)
 
