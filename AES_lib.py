@@ -22,3 +22,21 @@ class Text_square(VGroup):
         self.add(Square(side_length=side_length))
         self.add(TextMobject(text).scale(1.2 * side_length))
         self.arrange_submobjects(OUT)
+
+class Table_box(VGroup):
+    def __init__(self, rows = 4, cols = 4, side_length = 1, text_arr = []):
+    # used to create a box of row rows and columns cols
+    # text arr is made of an array like this
+    # [['ff', 'ff', 'ff'],
+    # ['ff', 'ff', 'ff'],
+    # ['ff', 'ff', 'ff']]
+    # Attention: each element of the array should be string
+        VGroup.__init__(self)
+        for row in range(rows):
+            row_table = VGroup()
+            for col in range(cols):
+                row_table.add(Text_square(text = text_arr[row][col], side_length = side_length))
+            row_table.arrange_submobjects(RIGHT, buff = 0)
+            self.add(row_table)
+        self.arrange_submobjects(DOWN, buff = 0)
+

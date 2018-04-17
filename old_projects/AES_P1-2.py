@@ -11,6 +11,7 @@ from AES_lib import *
 
 init_cipher = [["%02x" % ((ord(urandom(1)))) for row in range(4)] for column in range(4)]
 
+
 class Sub_bytes(Scene):
     def construct(self):
         self.init_plain()
@@ -78,3 +79,7 @@ class Shift_row(Scene):
                 row.add(copy.deepcopy(self.cipher_box[row_index][0]))
                 row[-1].shift(row[-1][0].side_length * 3 * RIGHT)
                 self.play(Transform(self.cipher_box[row_index], row))
+
+class Mix_row(Scene):
+    def construct(self):
+        pass
