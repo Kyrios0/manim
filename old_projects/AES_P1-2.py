@@ -80,6 +80,114 @@ class Shift_row(Scene):
                 row[-1].shift(row[-1][0].side_length * 3 * RIGHT)
                 self.play(Transform(self.cipher_box[row_index], row))
 
-class Mix_row(Scene):
+class Mix_col(Scene):
     def construct(self):
+        self.init_plain()
+        self.shift_first_col()
+        self.init_matrax()
+        self.calculate_first_col()
+        self.first_col_back()
+        for col_num in range(1,4):
+            self.calculate_other_col(col_num)
+
+    def init_plain(self):
+        plain = [["%02x" % ((ord(urandom(1)))) for row in range(4)] for column in range(4)]
+        self.plain_box = Table_box(rows = 4, cols = 4, text_arr = plain)
+        self.plain_box.shift(LEFT * 3)
+        self.play(ShowCreation(self.plain_box), time = 2)
+        self.wait(1)
+
+    def shift_first_col(self):
+        col_box = VGroup()
+        for row in range(4):
+            col_box.add(self.plain_box[row][0])
+        self.new_col = copy.deepcopy(col_box)
+        self.new_col.shift(RIGHT * 5)
+        self.play(ReplacementTransform(col_box,self.new_col))
+        self.wait(1)
+
+    def init_matrax(self):
+        matrax_element = [["%02x" % ((ord(urandom(1)))) for row in range(4)] for column in range(4)]
+        # matrax is here!
+        self.matrax = Table_box(rows = 4, cols = 4, text_arr = matrax_element)
+        for row in self.matrax:
+            for col in self.matrax:
+                pass
+        # self.matrax[row][col][0].color = BLACK
+        self.matrax.shift(RIGHT * 4)
+        self.play(ShowCreation(self.matrax))
+        self.wait(1)
+
+    def calculate_first_col(self):
+        # here to calculate the multiple  of matrax
+        pass
+
+    def first_col_back(self):
+        back_col = copy.deepcopy(self.new_col)
+        back_col.shift(LEFT * 5)
+        self.play(ReplacementTransform(self.new_col, back_col))
+
+    def calculate_other_col(self, col_num):
+        # here to calculate the xor of the first_col and others
+        pass
+
+
+class Add_round_key(Scene):
+    def construct(self):
+        self.plain = [["%02x" % ((ord(urandom(1)))) for row in range(4)] for column in range(4)]
+        self.init_plain()
+        self.init_key()
+        self.go_center()
+        self.play_xor()
+        self.back()
+        self.change_others()
+
+    def init_plain(self):
+        self.plain_box = Table_box(rows = 4, cols = 4, text_arr = self.plain)
+        self.plain_box.shift(LEFT * 4)
+        self.play(ShowCreation(self.plain_box), time = 2)
+        self.wait(1)
+
+    def init_key(self):
+        self.key_box = Table_box(rows = 4, cols = 4, text_arr = self.plain)
+        self.key_box.shift(RIGHT * 4)
+        self.play(ShowCreation(self.key_box), time = 2)
+        self.wait(1)
+
+    def go_center(self):
+        self.plain_first_col = VGroup()
+        self.key_first_col = VGroup()
+        for row in range(4):
+            self.plain_first_col.add(self.plain_box[row][0])
+
+        for row in range(4):
+            self.key_first_col.add(self.key_box[row][0])
+
+        new_plain_first = copy.deepcopy(self.plain_first_col)
+
+        new_plain_first.shift(RIGHT * 5)
+        new_plain_first.shift(UP * 1)
+        self.play(ReplacementTransform(self.plain_first_col, new_plain_first))
+        self.wait(1)
+
+
+    def play_xor(self):
+        xor_sign = TextMobject("$\oplus$")
+        xor_sign.next_to(self.plain_first_col, RIGHT)
+        xor_sign.scale(2)
+        new_key_first = copy.deepcopy(self.key_first_col)
+        new_key_first.next_to(xor_sign, RIGHT)
+        self.play(ShowCreation(xor_sign), time = 0.2)
+        self.play(ReplacementTransform(self.key_first_col, new_key_first))
+        self.wait(2)
+        self.play(FadeOut(xor_sign), FadeOut(self.key_first_col), FadeOut(new_key_first))
+
+    def back(self):
+        new_plain_first = copy.deepcopy(self.plain_first_col)
+        new_plain_first.shift(LEFT * 5)
+        new_plain_first.shift(DOWN * 1)
+        self.play(ReplacementTransform(self.plain_first_col, new_plain_first))
+        self.wait(1)
+
+    def change_others(self):
         pass
