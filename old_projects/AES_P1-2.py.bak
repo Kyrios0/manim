@@ -169,7 +169,8 @@ class Shift_row(Scene):
 
     def shift_box(self):
         """
-		fixed --Kyr1os @ 04.18
+        it's not perfect transform anime 
+        but Kyr1os is still trying to fix here
         """
         self.res = []
         for row_index in range(4):
