@@ -3,7 +3,11 @@ import numpy as np
 
 # Things anyone wishing to use this repository for their
 # own use will want to change this
-MEDIA_DIR = "/home/blacsheep/manim"
+MEDIA_DIR = '/tmp'
+"""os.path.join(
+    os.path.expanduser('~'),
+    "Dropbox (3Blue1Brown)/3Blue1Brown Team Folder"
+)"""
 #
 
 

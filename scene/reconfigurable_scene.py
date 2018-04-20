@@ -8,9 +8,6 @@ from constants import *
 
 
 class ReconfigurableScene(Scene):
-    """
-    Note, this seems to no longer work as intented.
-    """
     CONFIG = {
         "allow_recursion": True,
     }

@@ -20,7 +20,7 @@ class Text_square(VGroup):
     def __init__(self, text = '', side_length = 1):
         VGroup.__init__(self)
         self.add(Square(side_length=side_length))
-        self.add(TextMobject(text).scale(1.2 * side_length))
+        self.add(TextMobject(str(text)).scale(1.2 * side_length))
         self.arrange_submobjects(OUT)
 
 class Table_box(VGroup):

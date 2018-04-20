@@ -115,7 +115,7 @@ class Mobject(Container):
     def copy(self):
         # TODO, either justify reason for shallow copy, or
         # remove this redundancy everywhere
-        #return self.deepcopy()
+        return self.deepcopy()
 
         copy_mobject = copy.copy(self)
         copy_mobject.points = np.array(self.points)
@@ -255,7 +255,6 @@ class Mobject(Container):
 
     def apply_points_function_about_point(self, func, about_point=None, about_edge=ORIGIN):
         if about_point is None:
-            assert(about_edge is not None)
             about_point = self.get_critical_point(about_edge)
         for mob in self.family_members_with_points():
             mob.points -= about_point
@@ -554,7 +553,7 @@ class Mobject(Container):
         return self
 
     def fade_to(self, color, alpha):
-        for mob in self.submobject_family():
+        for mob in self.subobject_family():
             mob.fade_to_no_recurse(self, color, alpha)
         return self
 

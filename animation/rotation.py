@@ -12,7 +12,7 @@ from utils.config_ops import digest_config
 class Rotating(Animation):
     CONFIG = {
         "axis": OUT,
-        "radians": TAU,
+        "radians": 2 * np.pi,
         "run_time": 5,
         "rate_func": None,
         "in_place": True,
@@ -25,7 +25,10 @@ class Rotating(Animation):
 
     def update_mobject(self, alpha):
         Animation.update_mobject(self, alpha)
-        if self.in_place and self.about_point is None:
+        about_point = None
+        if self.about_point is not None:
+            self.about_point = about_point
+        elif self.in_place:  # This is superseeded
             self.about_point = self.mobject.get_center()
         self.mobject.rotate(
             alpha * self.radians,

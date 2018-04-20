@@ -427,6 +427,17 @@ class Line(VMobject):
         self.shift(new_start - self.get_start())
         return self
 
+    def insert_n_anchor_points(self, n):
+        if not self.path_arc:
+            n_anchors = self.get_num_anchor_points()
+            new_num_points = 3 * (n_anchors + n) - 2
+            self.points = np.array([
+                self.point_from_proportion(alpha)
+                for alpha in np.linspace(0, 1, new_num_points)
+            ])
+        else:
+            VMobject.insert_n_anchor_points(self, n)
+
 
 class DashedLine(Line):
     CONFIG = {
@@ -439,9 +450,6 @@ class DashedLine(Line):
 
     def generate_points(self):
         length = np.linalg.norm(self.end - self.start)
-        if length == 0:
-            self.add(Line(self.start, self.end))
-            return self
         num_interp_points = int(length / self.dashed_segment_length)
         points = [
             interpolate(self.start, self.end, alpha)
@@ -718,41 +726,6 @@ class Square(Rectangle):
             width=self.side_length,
             **kwargs
         )
-
-
-class RoundedRectangle(Rectangle):
-    CONFIG = {
-        "corner_radius" : 0.5,
-        "close_new_points" : True
-    }
-
-    def generate_points(self):
-        y, x = self.height / 2., self.width / 2.
-        r = self.corner_radius
-
-        arc_ul = ArcBetweenPoints(x * LEFT + (y - r) * UP, (x - r) * LEFT + y * UP, angle = -TAU/4)
-        arc_ur = ArcBetweenPoints((x - r) * RIGHT + y * UP, x * RIGHT + (y - r) * UP, angle = -TAU/4)
-        arc_lr = ArcBetweenPoints(x * RIGHT + (y - r) * DOWN, (x - r) * RIGHT + y * DOWN, angle = -TAU/4)
-        arc_ll = ArcBetweenPoints(x * LEFT + (y - r) * DOWN, (x - r) * LEFT + y * DOWN, angle = TAU/4) # sic! bug in ArcBetweenPoints?
-        
-        points = arc_ul.points
-        points = np.append(points,np.array([y * UP]), axis = 0)
-        points = np.append(points,np.array([y * UP]), axis = 0)
-        points = np.append(points,arc_ur.points, axis = 0)
-        points = np.append(points,np.array([x * RIGHT]), axis = 0)
-        points = np.append(points,np.array([x * RIGHT]), axis = 0)
-        points = np.append(points,arc_lr.points, axis = 0)
-        points = np.append(points,np.array([y * DOWN]), axis = 0)
-        points = np.append(points,np.array([y * DOWN]), axis = 0)
-        points = np.append(points,arc_ll.points[::-1], axis = 0) # sic! see comment above
-        points = np.append(points,np.array([x * LEFT]), axis = 0)
-        points = np.append(points,np.array([x * LEFT]), axis = 0)
-        points = np.append(points,np.array([x * LEFT + (y - r) * UP]), axis = 0)
-
-        points = points[::-1]
-
-        self.set_points(points)
-
 
 
 class Grid(VMobject):
